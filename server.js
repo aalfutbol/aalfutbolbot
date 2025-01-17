@@ -1,12 +1,65 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const { createCanvas, loadImage } = require('canvas'); // Canvas modülünü ekliyoruz
+const { createCanvas, loadImage } = require('canvas');
 const app = express();
+
+const teams = [
+  'Resitaal', 'Follofoş', 'Firavunun Musası', 'Bamba', 'Hazyurs',
+  'CPT', 'Filiz Kemaal', 'Dombaalak', 'Hilmi FC', 'BirBeşBir',
+  'Mangolu İce Tea', 'SDM Sporting', 'FSA FC', 'Best Ham United', 'Arriero'
+];
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => {
+  // Ev sahibi ve deplasman takımlarını seçmek için HTML formu döndürüyoruz
+  let formHTML = '<h1 style="text-align:center;">AALFUTBOL MAÇ OTOMATİK GÖRSELİ BOTU</h1>';
+  formHTML += '<form method="POST" action="/submit" style="text-align:center;">';
+  
+  // Ev sahibi takım seçimi
+  formHTML += '<label for="homeTeam">Ev Sahibi Takım:</label>';
+  formHTML += '<select name="homeTeam" id="homeTeam" onchange="updateAwayTeam()" style="font-size: 18px;">';
+  formHTML += '<option value="">Seçiniz</option>'; // Varsayılan "Seçiniz" seçeneği
+  teams.forEach(team => {
+    formHTML += `<option value="${team}">${team}</option>`;
+  });
+  formHTML += '</select><br><br>';
+
+  // Deplasman takım seçimi
+  formHTML += '<label for="awayTeam">Deplasman Takım:</label>';
+  formHTML += '<select name="awayTeam" id="awayTeam" style="font-size: 18px;">';
+  formHTML += '<option value="">Seçiniz</option>'; // Varsayılan "Seçiniz" seçeneği
+  teams.forEach(team => {
+    formHTML += `<option value="${team}">${team}</option>`;
+  });
+  formHTML += '</select><br><br>';
+
+  formHTML += '<label for="homeScore">Ev Sahibi Skoru:</label><input type="number" name="homeScore" required style="font-size: 18px;"><br><br>';
+  formHTML += '<label for="awayScore">Deplasman Skoru:</label><input type="number" name="awayScore" required style="font-size: 18px;"><br><br>';
+
+  formHTML += '<label for="homeGoals">Ev Sahibi Gol Atanlar:</label><input type="text" name="homeGoals" style="font-size: 18px;"><br><br>';
+  formHTML += '<label for="awayGoals">Deplasman Gol Atanlar:</label><input type="text" name="awayGoals" style="font-size: 18px;"><br><br>';
+
+  formHTML += '<input type="submit" value="Görseli Oluştur" style="font-size: 18px; padding: 10px 20px;"><br><br>';
+  formHTML += '</form>';
+  formHTML += `<script>
+    function updateAwayTeam() {
+      const homeTeam = document.getElementById('homeTeam').value;
+      const awayTeamSelect = document.getElementById('awayTeam');
+      for (let option of awayTeamSelect.options) {
+        if (option.value === homeTeam) {
+          option.disabled = true;
+        } else {
+          option.disabled = false;
+        }
+      }
+    }
+  </script>`;
+  res.send(formHTML);
+});
 
 app.post('/submit', (req, res) => {
   const data = req.body;
@@ -34,8 +87,8 @@ async function createMatchImage(data) {
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height); // Arka planı canvas'a ekliyoruz
 
   // Takım logolarını ekleyelim
-  const homeTeamLogo = await loadImage(path.join(__dirname, 'public', 'logos', `${data.homeTeam}.png`));
-  const awayTeamLogo = await loadImage(path.join(__dirname, 'public', 'logos', `${data.awayTeam}.png`));
+  const homeTeamLogo = await loadImage(path.join(__dirname, 'public', 'logos', `${data.homeTeam.replace(/\s+/g, '').toLowerCase()}.png`));
+  const awayTeamLogo = await loadImage(path.join(__dirname, 'public', 'logos', `${data.awayTeam.replace(/\s+/g, '').toLowerCase()}.png`));
   
   // Ev sahibi takım logosunu ekleme
   ctx.drawImage(homeTeamLogo, 100, 150, 200, 200); // Boyut ve pozisyonu ayarlıyoruz
