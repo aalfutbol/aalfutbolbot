@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maç Bilgi Formu</title>
+</head>
+<body>
+  <form action="/submit" method="post">
+    <label for="homeTeam">Ev Sahibi Takım:</label>
+    <select name="homeTeam" id="homeTeam">
+      <option value="Resitaal">Resitaal</option>
+      <!-- Diğer takımlar buraya eklenecek -->
+    </select><br>
+    <label for="awayTeam">Deplasman Takımı:</label>
+    <select name="awayTeam" id="awayTeam">
+      <option value="Follofoş">Follofoş</option>
+      <!-- Diğer takımlar buraya eklenecek -->
+    </select><br>
+    <label for="homeGoals">Ev Sahibi Gol(ler):</label>
+    <input type="text" id="homeGoals" name="homeGoals"><br>
+    <label for="awayGoals">Deplasman Gol(ler):</label>
+    <input type="text" id="awayGoals" name="awayGoals"><br>
+    <button type="submit">Gönder</button>
+  </form>
+</body>
+</html>
