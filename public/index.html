@@ -1,27 +1,116 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Maç Bilgi Formu</title>
+  <title>AALFUTBOL MAÇ OTOMATİK GÖRSELİ BOTU</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    form {
+      display: inline-block;
+      text-align: left;
+      font-size: 18px;
+    }
+    label {
+      margin-top: 10px;
+      display: block;
+    }
+    select, input, button {
+      font-size: 18px;
+      padding: 8px;
+      margin-top: 5px;
+      width: 200px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
 </head>
 <body>
+  <h1>AALFUTBOL MAÇ OTOMATİK GÖRSELİ BOTU</h1>
+
   <form action="/submit" method="post">
+    <!-- Ev Sahibi Takım -->
     <label for="homeTeam">Ev Sahibi Takım:</label>
-    <select name="homeTeam" id="homeTeam">
+    <select name="homeTeam" id="homeTeam" required>
+      <option value="">Seçiniz</option>
       <option value="Resitaal">Resitaal</option>
-      <!-- Diğer takımlar buraya eklenecek -->
-    </select><br>
-    <label for="awayTeam">Deplasman Takımı:</label>
-    <select name="awayTeam" id="awayTeam">
       <option value="Follofoş">Follofoş</option>
-      <!-- Diğer takımlar buraya eklenecek -->
+      <option value="Firavunun Musası">Firavunun Musası</option>
+      <option value="Bamba">Bamba</option>
+      <option value="Hazyurs">Hazyurs</option>
+      <option value="CPT">CPT</option>
+      <option value="Filiz Kemaal">Filiz Kemaal</option>
+      <option value="Dombaalak">Dombaalak</option>
+      <option value="Hilmi FC">Hilmi FC</option>
+      <option value="BirBeşBir">BirBeşBir</option>
+      <option value="Mangolu İce Tea">Mangolu İce Tea</option>
+      <option value="SDM Sporting">SDM Sporting</option>
+      <option value="FSA FC">FSA FC</option>
+      <option value="Best Ham United">Best Ham United</option>
+      <option value="Arriero">Arriero</option>
     </select><br>
+
+    <!-- Deplasman Takım -->
+    <label for="awayTeam">Deplasman Takımı:</label>
+    <select name="awayTeam" id="awayTeam" required>
+      <option value="">Seçiniz</option>
+      <option value="Resitaal">Resitaal</option>
+      <option value="Follofoş">Follofoş</option>
+      <option value="Firavunun Musası">Firavunun Musası</option>
+      <option value="Bamba">Bamba</option>
+      <option value="Hazyurs">Hazyurs</option>
+      <option value="CPT">CPT</option>
+      <option value="Filiz Kemaal">Filiz Kemaal</option>
+      <option value="Dombaalak">Dombaalak</option>
+      <option value="Hilmi FC">Hilmi FC</option>
+      <option value="BirBeşBir">BirBeşBir</option>
+      <option value="Mangolu İce Tea">Mangolu İce Tea</option>
+      <option value="SDM Sporting">SDM Sporting</option>
+      <option value="FSA FC">FSA FC</option>
+      <option value="Best Ham United">Best Ham United</option>
+      <option value="Arriero">Arriero</option>
+    </select><br>
+
+    <!-- Gol Atanlar -->
     <label for="homeGoals">Ev Sahibi Gol(ler):</label>
     <input type="text" id="homeGoals" name="homeGoals"><br>
     <label for="awayGoals">Deplasman Gol(ler):</label>
     <input type="text" id="awayGoals" name="awayGoals"><br>
-    <button type="submit">Gönder</button>
+
+    <!-- Skorlar -->
+    <label for="homeScore">Ev Sahibi Skoru:</label>
+    <input type="number" id="homeScore" name="homeScore" required><br>
+    <label for="awayScore">Deplasman Skoru:</label>
+    <input type="number" id="awayScore" name="awayScore" required><br>
+
+    <!-- Gönder Butonu -->
+    <button type="submit">Görseli Oluştur</button>
   </form>
+
+  <script>
+    // Ev Sahibi ve Deplasman Takımı seçimleri arasında bağımlılığı kontrol etme
+    const homeTeamSelect = document.getElementById('homeTeam');
+    const awayTeamSelect = document.getElementById('awayTeam');
+
+    homeTeamSelect.addEventListener('change', function() {
+      const selectedHomeTeam = homeTeamSelect.value;
+
+      // Deplasman takımını ev sahibi takımıyla aynı yapmamak için
+      for (let option of awayTeamSelect.options) {
+        option.disabled = option.value === selectedHomeTeam || option.value === '';
+      }
+    });
+  </script>
 </body>
 </html>
