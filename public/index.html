@@ -82,11 +82,12 @@
       <option value="Arriero">Arriero</option>
     </select><br>
 
-    <!-- Gol Atanlar -->
-    <label for="homeGoals">Ev Sahibi Gol(ler):</label>
-    <input type="text" id="homeGoals" name="homeGoals"><br>
-    <label for="awayGoals">Deplasman Gol(ler):</label>
-    <input type="text" id="awayGoals" name="awayGoals"><br>
+    <!-- Gol Atan Oyuncular -->
+    <label for="homeGoals">Ev Sahibi Gol Atan Oyuncular (örneğin: ahmet1,mehmet2):</label>
+    <input type="text" id="homeGoals" name="homeGoals" required pattern="^[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9](?:,[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9])*$"><br>
+
+    <label for="awayGoals">Deplasman Gol Atan Oyuncular (örneğin: ahmet1,mehmet2):</label>
+    <input type="text" id="awayGoals" name="awayGoals" required pattern="^[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9](?:,[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9])*$"><br>
 
     <!-- Skorlar -->
     <label for="homeScore">Ev Sahibi Skoru:</label>
