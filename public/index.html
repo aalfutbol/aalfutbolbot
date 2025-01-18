@@ -14,8 +14,8 @@
       display: inline-block;
       text-align: left;
       font-size: 18px;
-      max-width: 600px; /* Formu daha dar yaparak ortalama */
-      margin: 0 auto; /* Ortalamayı sağlıyoruz */
+      max-width: 600px;
+      margin: 0 auto;
     }
     label {
       margin-top: 10px;
@@ -25,7 +25,7 @@
       font-size: 18px;
       padding: 8px;
       margin-top: 5px;
-      width: 100%; /* Genişlikleri %100 yaparak daha uyumlu hale getiriyoruz */
+      width: 100%;
     }
     button {
       background-color: #4CAF50;
@@ -37,14 +37,8 @@
     button:hover {
       background-color: #45a049;
     }
-
-    /* Yeni eklemeler */
-    .message {
-      font-size: 30px;
-      font-weight: bold;
-      color: green;
-      margin-top: 50px;
-      text-align: center;
+    .hidden {
+      display: none;
     }
   </style>
 </head>
@@ -52,6 +46,13 @@
   <h1>AALFUTBOL MAÇ OTOMATİK GÖRSELİ BOTU</h1>
 
   <form action="/submit" method="post">
+    <!-- Arka Plan Seçimi -->
+    <label for="backgroundType">Arkaplan Seçiniz:</label>
+    <select name="backgroundType" id="backgroundType" required>
+      <option value="macsonucu">Maç Sonucu</option>
+      <option value="macduyurusu">Maç Duyurusu</option>
+    </select><br>
+
     <!-- Ev Sahibi Takım -->
     <label for="homeTeam">Ev Sahibi Takım:</label>
     <select name="homeTeam" id="homeTeam" required>
@@ -95,46 +96,65 @@
     </select><br>
 
     <!-- Gol Atan Oyuncular -->
-    <label for="homeGoals">Ev Sahibi Gol Atan Oyuncular:</label>
-    <div>örneğin: ahmet1,mehmet2</div>
-    <input type="text" id="homeGoals" name="homeGoals" required pattern="^[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9](?:,[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9])*$"><br>
+    <div id="goalInputs">
+      <label for="homeGoals">Ev Sahibi Gol Atan Oyuncular:</label>
+      <div>örneğin: ahmet1,mehmet2</div>
+      <input type="text" id="homeGoals" name="homeGoals" required pattern="^[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9](?:,[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9])*$"><br>
 
-    <label for="awayGoals">Deplasman Gol Atan Oyuncular:</label>
-    <div>örneğin: ahmet1,mehmet2</div>
-    <input type="text" id="awayGoals" name="awayGoals" required pattern="^[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9](?:,[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9])*$"><br>
+      <label for="awayGoals">Deplasman Gol Atan Oyuncular:</label>
+      <div>örneğin: ahmet1,mehmet2</div>
+      <input type="text" id="awayGoals" name="awayGoals" required pattern="^[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9](?:,[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9])*$"><br>
 
-    <!-- Skorlar -->
-    <label for="homeScore">Ev Sahibi Skoru:</label>
-    <input type="number" id="homeScore" name="homeScore" required><br>
-    <label for="awayScore">Deplasman Skoru:</label>
-    <input type="number" id="awayScore" name="awayScore" required><br>
+      <!-- Skorlar -->
+      <label for="homeScore">Ev Sahibi Skoru:</label>
+      <input type="number" id="homeScore" name="homeScore" required><br>
+
+      <label for="awayScore">Deplasman Skoru:</label>
+      <input type="number" id="awayScore" name="awayScore" required><br>
+    </div>
 
     <!-- Gönder Butonu -->
     <button type="submit">Görseli Oluştur</button>
   </form>
 
-  <!-- Başarı mesajı -->
-  <div id="message" class="message"></div>
-
   <script>
-    // Ev Sahibi ve Deplasman Takımı seçimleri arasında bağımlılığı kontrol etme
+    const backgroundTypeSelect = document.getElementById('backgroundType');
     const homeTeamSelect = document.getElementById('homeTeam');
     const awayTeamSelect = document.getElementById('awayTeam');
+    const goalInputs = document.getElementById('goalInputs');
 
-    homeTeamSelect.addEventListener('change', function() {
-      const selectedHomeTeam = homeTeamSelect.value;
-
-      // Deplasman takımını ev sahibi takımıyla aynı yapmamak için
-      for (let option of awayTeamSelect.options) {
-        option.disabled = option.value === selectedHomeTeam || option.value === '';
+    backgroundTypeSelect.addEventListener('change', function() {
+      if (backgroundTypeSelect.value === 'macduyurusu') {
+        goalInputs.classList.add('hidden');
+        document.getElementById('homeGoals').removeAttribute('required');
+        document.getElementById('awayGoals').removeAttribute('required');
+        document.getElementById('homeScore').removeAttribute('required');
+        document.getElementById('awayScore').removeAttribute('required');
+      } else {
+        goalInputs.classList.remove('hidden');
+        document.getElementById('homeGoals').setAttribute('required', '');
+        document.getElementById('awayGoals').setAttribute('required', '');
+        document.getElementById('homeScore').setAttribute('required', '');
+        document.getElementById('awayScore').setAttribute('required', '');
       }
     });
 
-    // Formun başarıyla gönderildiğinde mesajın görüntülenmesi
-    const messageDiv = document.getElementById('message');
-    window.addEventListener('messageReceived', function(event) {
-      messageDiv.innerText = event.detail.message;
-    });
+    function updateAwayTeamOptions() {
+      const selectedHomeTeam = homeTeamSelect.value;
+      for (let option of awayTeamSelect.options) {
+        option.disabled = option.value === selectedHomeTeam || option.value === '';
+      }
+    }
+
+    function updateHomeTeamOptions() {
+      const selectedAwayTeam = awayTeamSelect.value;
+      for (let option of homeTeamSelect.options) {
+        option.disabled = option.value === selectedAwayTeam || option.value === '';
+      }
+    }
+
+    homeTeamSelect.addEventListener('change', updateAwayTeamOptions);
+    awayTeamSelect.addEventListener('change', updateHomeTeamOptions);
   </script>
 </body>
 </html>
