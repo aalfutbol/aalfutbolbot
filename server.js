@@ -48,27 +48,29 @@ async function createMatchImage(data) {
   const awayGoals = parseGoals(data.awayGoals);
 
   // Ev sahibi gol atan oyuncuları yazma
+  ctx.fillStyle = 'white'; // Yazı rengini beyaz yapıyoruz
   ctx.font = '100px Arial';
   let yPosition = 950; // Ev sahibi için ilk pozisyon
   homeGoals.forEach(goal => {
-    ctx.fillText(goal.name, 100, yPosition);
+    ctx.fillText(goal.name, 250, yPosition);
     if (goal.goals > 1) {
-      ctx.fillText(`${goal.goals} gol`, 200, yPosition); // Gol sayısı 1'den fazla ise göster
+      ctx.fillText(`${goal.goals} gol`, 400, yPosition); // Gol sayısı 1'den fazla ise göster
     }
-    yPosition += 50; // Y ekseninde aralık bırakıyoruz
+    yPosition += 100; // Y ekseninde aralık bırakıyoruz
   });
 
   // Deplasman gol atan oyuncuları yazma
   yPosition = 950; // Deplasman için ilk pozisyon
   awayGoals.forEach(goal => {
-    ctx.fillText(goal.name, 2237, yPosition);
+    ctx.fillText(goal.name, 2000, yPosition);
     if (goal.goals > 1) {
-      ctx.fillText(`${goal.goals} gol`, 2337, yPosition); // Gol sayısı 1'den fazla ise göster
+      ctx.fillText(`${goal.goals} gol`, 2150, yPosition); // Gol sayısı 1'den fazla ise göster
     }
-    yPosition += 200; // Y ekseninde aralık bırakıyoruz
+    yPosition += 100; // Y ekseninde aralık bırakıyoruz
   });
 
   // Sonuç: Ev sahibi - Deplasman
+  ctx.fillStyle = 'white'; // Skor beyaz renkte olacak
   ctx.font = '200px Arial';
   ctx.fillText(`${data.homeScore} - ${data.awayScore}`, 1050, 650); // Skor
 
