@@ -9,10 +9,6 @@
       font-family: Arial, sans-serif;
       text-align: center;
       margin-top: 50px;
-      min-height: 100vh; /* Sayfa yüksekliği minimum 100vh */
-      display: flex;
-      flex-direction: column;
-      justify-content: center; /* Sayfa içeriğini dikeyde ortalamak için */
     }
     form {
       display: inline-block;
@@ -42,21 +38,20 @@
       background-color: #45a049;
     }
 
-    /* Başarı mesajı */
+    /* Yeni eklemeler */
     .message {
       font-size: 30px;
       font-weight: bold;
       color: green;
       margin-top: 50px;
       text-align: center;
-      display: none; /* Başlangıçta gizli */
     }
   </style>
 </head>
 <body>
   <h1>AALFUTBOL MAÇ OTOMATİK GÖRSELİ BOTU</h1>
 
-  <form id="scoreForm" action="/submit" method="post">
+  <form action="/submit" method="post">
     <!-- Ev Sahibi Takım -->
     <label for="homeTeam">Ev Sahibi Takım:</label>
     <select name="homeTeam" id="homeTeam" required>
@@ -119,7 +114,7 @@
   </form>
 
   <!-- Başarı mesajı -->
-  <div id="message" class="message">Form başarıyla alındı, veriler kaydedildi ve görsel oluşturuldu!</div>
+  <div id="message" class="message"></div>
 
   <script>
     // Ev Sahibi ve Deplasman Takımı seçimleri arasında bağımlılığı kontrol etme
@@ -135,17 +130,10 @@
       }
     });
 
-    // Formu gönderme ve başarı mesajını gösterme
-    const form = document.getElementById('scoreForm');
-    form.addEventListener('submit', function(event) {
-      event.preventDefault(); // Formun otomatik gönderilmesini engeller
-
-      // Mesajı göster
-      const messageDiv = document.getElementById('message');
-      messageDiv.style.display = 'block'; // Mesajı görünür yap
-
-      // Form verilerini işleme (örneğin: AJAX ile verileri sunucuya gönderebilirsiniz)
-      // Burada sadece mesaj göstereceğiz, gerisini sunucuya iletebilirsiniz.
+    // Formun başarıyla gönderildiğinde mesajın görüntülenmesi
+    const messageDiv = document.getElementById('message');
+    window.addEventListener('messageReceived', function(event) {
+      messageDiv.innerText = event.detail.message;
     });
   </script>
 </body>
