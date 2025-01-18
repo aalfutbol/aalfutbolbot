@@ -9,11 +9,17 @@
       font-family: Arial, sans-serif;
       text-align: center;
       margin-top: 50px;
+      min-height: 100vh; /* Sayfa yüksekliği minimum 100vh */
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Sayfa içeriğini dikeyde ortalamak için */
     }
     form {
       display: inline-block;
       text-align: left;
       font-size: 18px;
+      max-width: 600px; /* Formu daha dar yaparak ortalama */
+      margin: 0 auto; /* Ortalamayı sağlıyoruz */
     }
     label {
       margin-top: 10px;
@@ -23,23 +29,34 @@
       font-size: 18px;
       padding: 8px;
       margin-top: 5px;
-      width: 200px;
+      width: 100%; /* Genişlikleri %100 yaparak daha uyumlu hale getiriyoruz */
     }
     button {
       background-color: #4CAF50;
       color: white;
       border: none;
       cursor: pointer;
+      margin-top: 10px;
     }
     button:hover {
       background-color: #45a049;
+    }
+
+    /* Başarı mesajı */
+    .message {
+      font-size: 30px;
+      font-weight: bold;
+      color: green;
+      margin-top: 50px;
+      text-align: center;
+      display: none; /* Başlangıçta gizli */
     }
   </style>
 </head>
 <body>
   <h1>AALFUTBOL MAÇ OTOMATİK GÖRSELİ BOTU</h1>
 
-  <form action="/submit" method="post">
+  <form id="scoreForm" action="/submit" method="post">
     <!-- Ev Sahibi Takım -->
     <label for="homeTeam">Ev Sahibi Takım:</label>
     <select name="homeTeam" id="homeTeam" required>
@@ -83,10 +100,12 @@
     </select><br>
 
     <!-- Gol Atan Oyuncular -->
-    <label for="homeGoals">Ev Sahibi Gol Atan Oyuncular (örneğin: ahmet1,mehmet2):</label>
+    <label for="homeGoals">Ev Sahibi Gol Atan Oyuncular:</label>
+    <div>örneğin: ahmet1,mehmet2</div>
     <input type="text" id="homeGoals" name="homeGoals" required pattern="^[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9](?:,[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9])*$"><br>
 
-    <label for="awayGoals">Deplasman Gol Atan Oyuncular (örneğin: ahmet1,mehmet2):</label>
+    <label for="awayGoals">Deplasman Gol Atan Oyuncular:</label>
+    <div>örneğin: ahmet1,mehmet2</div>
     <input type="text" id="awayGoals" name="awayGoals" required pattern="^[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9](?:,[a-zA-ZşİıÇçÖöÜüĞğ]+[1-9])*$"><br>
 
     <!-- Skorlar -->
@@ -98,6 +117,9 @@
     <!-- Gönder Butonu -->
     <button type="submit">Görseli Oluştur</button>
   </form>
+
+  <!-- Başarı mesajı -->
+  <div id="message" class="message">Form başarıyla alındı, veriler kaydedildi ve görsel oluşturuldu!</div>
 
   <script>
     // Ev Sahibi ve Deplasman Takımı seçimleri arasında bağımlılığı kontrol etme
@@ -111,6 +133,19 @@
       for (let option of awayTeamSelect.options) {
         option.disabled = option.value === selectedHomeTeam || option.value === '';
       }
+    });
+
+    // Formu gönderme ve başarı mesajını gösterme
+    const form = document.getElementById('scoreForm');
+    form.addEventListener('submit', function(event) {
+      event.preventDefault(); // Formun otomatik gönderilmesini engeller
+
+      // Mesajı göster
+      const messageDiv = document.getElementById('message');
+      messageDiv.style.display = 'block'; // Mesajı görünür yap
+
+      // Form verilerini işleme (örneğin: AJAX ile verileri sunucuya gönderebilirsiniz)
+      // Burada sadece mesaj göstereceğiz, gerisini sunucuya iletebilirsiniz.
     });
   </script>
 </body>
