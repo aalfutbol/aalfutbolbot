@@ -18,7 +18,52 @@ app.post('/submit', (req, res) => {
 
   // Görseli oluşturma
   createMatchImage(data).then(() => {
-    res.send('Form başarıyla alındı, veriler kaydedildi ve görsel oluşturuldu!');
+    res.send(`
+      <html>
+        <head>
+          <style>
+            body {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100vh;
+              margin: 0;
+              font-family: Arial, sans-serif;
+              background-color: #f4f4f4;
+            }
+            .message {
+              text-align: center;
+              font-size: 24px;
+              color: green;
+              margin-bottom: 20px;
+            }
+            .button-container {
+              text-align: center;
+            }
+            button {
+              background-color: #4CAF50;
+              color: white;
+              padding: 15px 32px;
+              font-size: 18px;
+              border: none;
+              cursor: pointer;
+              text-align: center;
+            }
+            button:hover {
+              background-color: #45a049;
+            }
+          </style>
+        </head>
+        <body>
+          <div>
+            <div class="message">Form başarıyla alındı, veriler kaydedildi ve görsel oluşturuldu!</div>
+            <div class="button-container">
+              <button onclick="window.history.back()">Ana Menüye dön</button>
+            </div>
+          </div>
+        </body>
+      </html>
+    `);
   }).catch(err => {
     console.error("Görsel oluşturulurken hata:", err);
     res.status(500).send('Görsel oluşturulurken hata oluştu.');
