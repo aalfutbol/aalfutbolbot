@@ -71,70 +71,63 @@ app.post('/submit', (req, res) => {
 });
 
 async function createMatchImage(data) {
-  const canvas = createCanvas(2537, 1800); // Yeni boyutları ayarlıyoruz
+  const isAnnouncement = data.background === 'matchAnnouncement';
+  const canvas = createCanvas(2537, 1800);
   const ctx = canvas.getContext('2d');
 
   // Arka planı ekliyoruz
-  const background = await loadImage(path.join(__dirname, 'public', 'logos', 'macsonucu.png')); // Arka plan görselini yüklüyoruz
-  ctx.drawImage(background, 0, 0, canvas.width, canvas.height); // Arka planı canvas'a ekliyoruz
+  const backgroundImagePath = path.join(__dirname, 'public', 'logos', isAnnouncement ? 'macduyurusu.png' : 'macsonucu.png');
+  const background = await loadImage(backgroundImagePath);
+  ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
   // Takım logolarını ekleyelim
   const homeTeamLogo = await loadImage(path.join(__dirname, 'public', 'logos', `${data.homeTeam.replace(/\s+/g, '').toLowerCase()}.png`));
   const awayTeamLogo = await loadImage(path.join(__dirname, 'public', 'logos', `${data.awayTeam.replace(/\s+/g, '').toLowerCase()}.png`));
-  
-  // Ev sahibi takım logosunu ekleme
-  ctx.drawImage(homeTeamLogo, 250, 335, 600, 600); // Boyut ve pozisyonu ayarlıyoruz
 
-  // Deplasman takım logosunu ekleme
-  ctx.drawImage(awayTeamLogo, 1700, 335, 600, 600); // Boyut ve pozisyonu ayarlıyoruz
+  ctx.drawImage(homeTeamLogo, 250, 335, 600, 600); // Ev sahibi takım logosu
+  ctx.drawImage(awayTeamLogo, 1700, 335, 600, 600); // Deplasman takım logosu
 
-  // Gol atan oyuncuları işleyelim
-  const homeGoals = parseGoals(data.homeGoals);
-  const awayGoals = parseGoals(data.awayGoals);
+  if (!isAnnouncement) {
+    // Maç sonucu için ekstra bilgiler ekliyoruz
+    const homeGoals = parseGoals(data.homeGoals);
+    const awayGoals = parseGoals(data.awayGoals);
 
-  // Ev sahibi gol atan oyuncuları yazma
-  ctx.fillStyle = 'white'; // Yazı rengini beyaz yapıyoruz
-  ctx.font = '100px Arial';
-  let yPosition = 950; // Ev sahibi için ilk pozisyon
-  homeGoals.forEach(goal => {
-    ctx.fillText(goal.name, 250, yPosition);
-    if (goal.goals > 1) {
-      ctx.fillText(`${goal.goals} gol`, 400, yPosition); // Gol sayısı 1'den fazla ise göster
-    }
-    yPosition += 100; // Y ekseninde aralık bırakıyoruz
-  });
+    ctx.fillStyle = 'white';
+    ctx.font = '100px Arial';
+    let yPosition = 950;
+    homeGoals.forEach(goal => {
+      ctx.fillText(goal.name, 250, yPosition);
+      if (goal.goals > 1) {
+        ctx.fillText(`${goal.goals} gol`, 400, yPosition);
+      }
+      yPosition += 100;
+    });
 
-  // Deplasman gol atan oyuncuları yazma
-  yPosition = 950; // Deplasman için ilk pozisyon
-  awayGoals.forEach(goal => {
-    ctx.fillText(goal.name, 2000, yPosition);
-    if (goal.goals > 1) {
-      ctx.fillText(`${goal.goals} gol`, 2150, yPosition); // Gol sayısı 1'den fazla ise göster
-    }
-    yPosition += 100; // Y ekseninde aralık bırakıyoruz
-  });
+    yPosition = 950;
+    awayGoals.forEach(goal => {
+      ctx.fillText(goal.name, 2000, yPosition);
+      if (goal.goals > 1) {
+        ctx.fillText(`${goal.goals} gol`, 2150, yPosition);
+      }
+      yPosition += 100;
+    });
 
-  // Sonuç: Ev sahibi - Deplasman
-  ctx.fillStyle = 'white'; // Skor beyaz renkte olacak
-  ctx.font = '200px Arial';
-  ctx.fillText(`${data.homeScore} - ${data.awayScore}`, 1050, 650); // Skor
+    ctx.font = '200px Arial';
+    ctx.fillText(`${data.homeScore} - ${data.awayScore}`, 1050, 650);
+  }
 
-  // Görseli kaydediyoruz
   const buffer = canvas.toBuffer('image/png');
-  fs.writeFileSync('logs/matchImage.png', buffer); // Görseli kaydediyoruz
+  fs.writeFileSync('logs/matchImage.png', buffer);
 }
 
-// Gol atan oyuncuları ayrıştırmak için yardımcı fonksiyon
 function parseGoals(goalString) {
-  const goalEntries = goalString.split(','); // Virgülle ayrılmış oyuncu-gol sayısı
-  const goals = goalEntries.map(entry => {
-    const parts = entry.trim().split(/(\d+)/); // İsmi ve gol sayısını ayırıyoruz
+  const goalEntries = goalString.split(',');
+  return goalEntries.map(entry => {
+    const parts = entry.trim().split(/(\d+)/);
     const name = parts[0].trim();
     const goals = parseInt(parts[1], 10);
     return { name, goals };
   });
-
-  return goals;
 }
 
 const PORT = 3000;
